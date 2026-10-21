@@ -1,0 +1,62 @@
+<main class="tv-shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">✦</span><span>CineMind<span class="brand-ai"> AI</span></span></div>
+    <nav aria-label="Movie categories">
+      <button type="button" *ngFor="let tab of ['For you','Family','Laughs','Adventure','Mystery']"
+        class="nav-item" [class.active]="activeTab === tab" (click)="chooseTab(tab)" data-tv-focus>{{tab}}</button>
+    </nav>
+    <div class="status"><span class="status-dot" [class.offline]="health !== 'online'"></span>{{health === 'online' ? 'AI READY' : 'CONNECTING'}}</div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="sparkle">✦</span> YOUR PERSONAL ENTERTAINMENT GUIDE</div>
+      <h1>Tonight feels like<br><span>something good.</span></h1>
+      <p class="subhead">Tell me the mood. I'll find the movie.</p>
+      <form class="prompt-box" (ngSubmit)="recommend()">
+        <span class="prompt-icon">✧</span>
+        <input name="prompt" [(ngModel)]="prompt" maxlength="500" placeholder="What are you in the mood for?" aria-label="Describe your movie mood" data-tv-focus />
+        <button class="go-button" type="submit" [disabled]="loading" data-tv-focus>{{loading ? 'Thinking…' : 'Find my movie'}}<span>→</span></button>
+      </form>
+      <div class="quick-prompts">
+        <span class="quick-label">TRY</span>
+        <button type="button" *ngFor="let idea of suggestions" (click)="recommend(idea)" data-tv-focus>{{idea}}</button>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+      <div class="planet planet-large">✦</div><div class="planet planet-small">✧</div>
+      <div class="floating-card card-a"><span>TONIGHT'S MOOD</span><strong>Feel-good</strong><i>☀</i></div>
+      <div class="floating-card card-b"><span>YOUR KIND OF STORY</span><strong>Made for you</strong><i>✧</i></div>
+      <div class="hero-glow"></div>
+    </div>
+  </section>
+
+  <section class="results-section">
+    <div class="section-heading">
+      <div><div class="eyebrow">CURATED FOR YOUR MOMENT</div><h2>{{loading ? 'Finding your next favourite…' : 'Your movie night, reimagined'}}</h2></div>
+      <div class="mode-label"><span class="mode-pip" [class.live]="mode === 'ai'"></span>{{mode === 'ai' ? 'PERSONALIZED WITH AI' : 'SMART DEMO MODE'}}</div>
+    </div>
+    <p class="notice" *ngIf="note">{{note}}</p>
+    <p class="error" *ngIf="error">{{error}}</p>
+    <div class="movie-grid" *ngIf="recommendations.length">
+      <button type="button" class="movie-card" *ngFor="let movie of recommendations; let i = index; trackBy: trackById"
+        [class.chosen]="selectedIndex === i" (click)="selectMovie(i)" data-tv-focus>
+        <div class="poster" [style.background]="'linear-gradient(145deg,' + movie.colors[0] + ',' + movie.colors[1] + ')'">
+          <div class="poster-top"><span>{{movie.genre | uppercase}}</span><span class="match">{{movie.match}}% MATCH</span></div>
+          <div class="poster-emoji">{{movie.emoji}}</div>
+          <div class="poster-bottom"><span>{{movie.year}}</span><span>{{movie.rating}}</span></div>
+          <div class="poster-title">{{movie.title}}</div>
+        </div>
+        <div class="movie-info">
+          <div class="movie-title">{{movie.title}}</div>
+          <div class="meta">{{movie.genre}} <span>•</span> {{movie.runtime}} min <span>•</span> {{movie.rating}}</div>
+          <p>{{movie.reason}}</p>
+        </div>
+      </button>
+    </div>
+    <div class="empty-state" *ngIf="!loading && !recommendations.length && !error">Your recommendations will appear here.</div>
+  </section>
+
+  <footer><span>✦ C I N E M I N D</span><span>Built for the big screen · Your taste, your night</span><span>DEMO CATALOG · NO STREAMING CLAIMS</span></footer>
+</main>
